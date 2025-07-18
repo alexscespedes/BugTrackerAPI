@@ -1,3 +1,4 @@
+using System.IdentityModel.Tokens.Jwt;
 using System.Text;
 using BugTrackerAPI.Data;
 using BugTrackerAPI.Models;
@@ -83,9 +84,13 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
+JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
+
 builder.Services.AddScoped<TokenService>();
 
 builder.Services.AddAuthorization();
+
+builder.Services.AddScoped<IBugService, BugService>();
 
 var app = builder.Build();
 
