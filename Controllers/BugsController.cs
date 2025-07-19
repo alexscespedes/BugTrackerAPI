@@ -8,6 +8,7 @@ namespace BugTrackerAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class BugsController : ControllerBase
     {
         private readonly IBugService _bugService;
