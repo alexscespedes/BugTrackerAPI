@@ -46,18 +46,21 @@ namespace BugTrackerAPI.Controllers
         }
 
         [HttpPost("login")]
-        public async Task<IActionResult> Login(LoginRequest request)
+        public async Task<IActionResult> Login([FromBody] LoginDto login)
         {
-            var user = await _userManager.FindByEmailAsync(request.Email);
-            if (user == null) return Unauthorized("Invalid credentials");
+            var user = await _userManager.FindByNameAsync(login.UserName);
 
-            var result = await _signInManager.CheckPasswordSignInAsync(user, request.Password, false);
-            if (!result.Succeeded) return Unauthorized("Invalid credentials");
+            if (user == null)
+                return Unauthorized("Invalid credentials");
 
-            var roles = await _userManager.GetRolesAsync(user);
-            var token = _tokenService.CreateToken(user, roles);
+            var result = await _signInManager.PasswordSignInAsync(user, login.Password, isPersistent: false, lockoutOnFailure: false);
 
-            return Ok(new { token });
+            if (!result.Succeeded)
+                return Unauthorized("Invalid credentials");
+
+            return Ok(new { message = "Logged In" });
         }
     }
+
+    public record LoginDto(string UserName, string Password);
 }

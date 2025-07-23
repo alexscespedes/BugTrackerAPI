@@ -88,6 +88,19 @@ JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
 
 builder.Services.AddScoped<TokenService>();
 
+builder.Services.AddAuthentication("BugAuth")
+    .AddCookie("BugAuth", options =>
+    {
+        options.LoginPath = "/api/auth/login";
+        options.AccessDeniedPath = "/api/auth/denied";
+        options.Cookie.Name = "BugTrackerAuth";
+        options.Events.OnRedirectToLogin = context =>
+        {
+            context.Response.StatusCode = 401;
+            return Task.CompletedTask;
+        };
+    });
+
 builder.Services.AddAuthorization();
 
 builder.Services.AddScoped<IBugService, BugService>();
